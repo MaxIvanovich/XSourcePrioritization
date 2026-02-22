@@ -1,7 +1,7 @@
 """ Модуль для фильтрации исходных файлов по статусу чтения и группировки по типу. """
 
 from typing import Dict, List
-from .parser import SourceFile
+from parser import SourceFile
 
 
 def filter_unread_sources(sources: List[SourceFile]) -> List[SourceFile]:

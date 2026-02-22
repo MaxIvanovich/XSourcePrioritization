@@ -1,7 +1,7 @@
 """ Модуль записи результатов в файлы. """
 
 from typing import Dict
-from .parser import SourceFile
+from parser import SourceFile
 
 
 def update_source_file(source: SourceFile, priority_level: str) -> bool:

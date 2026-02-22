@@ -2,11 +2,11 @@
 
 import argparse
 from pathlib import Path
-from .parser import find_source_files
-from .filter import filter_unread_sources, count_sources_by_type, group_sources_by_type
-from .utils import display_type_menu
-from .prioritizer import prioritize_sources
-from .updater import update_source_files
+from parser import find_source_files
+from filter import filter_unread_sources, count_sources_by_type, group_sources_by_type
+from utils import display_type_menu
+from prioritizer import prioritize_sources
+from updater import update_source_files
 
 
 def main():

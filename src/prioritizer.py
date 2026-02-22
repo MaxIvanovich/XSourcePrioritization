@@ -4,8 +4,8 @@
 """
 
 from typing import List, Tuple, Dict
-from .parser import SourceFile
-from .utils import calculate_alpha, display_group_selection, get_pair_comparison, divide_into_priority_groups
+from parser import SourceFile
+from utils import calculate_alpha, display_group_selection, get_pair_comparison, divide_into_priority_groups
 
 
 def prepare_sources_for_prioritization(sources: List[SourceFile]) -> List[SourceFile]:

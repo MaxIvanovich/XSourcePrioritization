@@ -2,7 +2,7 @@
 
 import math
 from typing import List, Tuple
-from .parser import SourceFile
+from parser import SourceFile
 
 
 def display_type_menu(type_counts: dict) -> int:
