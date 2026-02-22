@@ -1,33 +1,25 @@
-"""
-Module for filtering source files by read status and grouping by type.
-"""
+""" Модуль для фильтрации исходных файлов по статусу чтения и группировки по типу. """
 
 from typing import Dict, List
 from .parser import SourceFile
 
 
 def filter_unread_sources(sources: List[SourceFile]) -> List[SourceFile]:
-    """
-    Filter sources to include only those with readed=False.
-    
+    """ Выбор непрочитанных источников - файлов с readed=False.
     Args:
-        sources: List of SourceFile objects
-        
+        sources: список файлов
     Returns:
-        List of SourceFile objects with readed=False
+        Список файлов с readed=False
     """
     return [source for source in sources if not source.readed]
 
 
 def group_sources_by_type(sources: List[SourceFile]) -> Dict[str, List[SourceFile]]:
-    """
-    Group sources by their type field.
-    
+    """ Группировка источников по типу.
     Args:
-        sources: List of SourceFile objects
-        
+        sources: список файлов
     Returns:
-        Dictionary mapping type to list of sources of that type
+        Словарь с сопоставленными файлами и их типами
     """
     groups = {}
     for source in sources:
@@ -39,14 +31,11 @@ def group_sources_by_type(sources: List[SourceFile]) -> Dict[str, List[SourceFil
 
 
 def count_sources_by_type(sources: List[SourceFile]) -> Dict[str, int]:
-    """
-    Count the number of sources for each type.
-    
+    """ Подсчет количества источников по типу.
     Args:
-        sources: List of SourceFile objects
-        
+        sources: Список файлов
     Returns:
-        Dictionary mapping type to count of sources of that type
+        Словарь сопоставлений типов и количества файлов
     """
     counts = {}
     for source in sources:
