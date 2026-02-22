@@ -16,6 +16,19 @@ class SourceFile:
     readed: bool
     title: str
 
+    def __eq__(self, other):
+        """ Проверка равенства на основе path, type, readed, и title. """
+        if not isinstance(other, SourceFile):
+            return False
+        return (self.path == other.path and 
+                self.type == other.type and 
+                self.readed == other.readed and 
+                self.title == other.title)
+
+    def __hash__(self):
+        """ Делает SourceFile хешируемым на основе его аттрибутов. """
+        return hash((self.path, self.type, self.readed, self.title))
+
 
 def parse_frontmatter(content: str) -> dict:
     """ Извлечение метаданных из файлов.
