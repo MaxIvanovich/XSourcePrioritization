@@ -1,6 +1,4 @@
-"""
-Модуль чтения файлов markdown. Извлекает тип, статус чтения и заголовок из файлов markdown.
-"""
+""" Модуль чтения файлов markdown. Извлекает тип, статус чтения и заголовок из файлов markdown. """
 
 import re
 from dataclasses import dataclass
