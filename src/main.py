@@ -1,6 +1,4 @@
-"""
-Main module for the source prioritization CLI application.
-"""
+""" Основной модуль консольной утилиты приоритезации источников из базы знаний Obsidian """
 
 import argparse
 from pathlib import Path
@@ -12,10 +10,10 @@ from .updater import update_source_files
 
 
 def main():
-    """Main entry point for the application."""
-    parser = argparse.ArgumentParser(description="Console application for source prioritization")
-    parser.add_argument("--path", required=True, help="Path to directory with markdown source files")
-    parser.add_argument("--count", action="store_true", help="Show count of unread sources by type and exit")
+    """Точка входа в приложение"""
+    parser = argparse.ArgumentParser(description="Приложение перекрёстной приоритезации книг, статей и т.д.")
+    parser.add_argument("--path", required=True, help="Путь к директории, содержащей markdown-файлы")
+    parser.add_argument("--count", action="store_true", help="Вывести типы непрочитанных источников и их количество")
     
     args = parser.parse_args()
     
@@ -25,21 +23,21 @@ def main():
         print(f"Error: Directory '{args.path}' does not exist.")
         return
     
-    # Find all source files in the directory
+    # Все файлы в директории
     all_sources = find_source_files(directory_path)
     
     if not all_sources:
-        print("No valid source files found in the specified directory.")
+        print("В директории не найдено подходящих файлов.")
         return
     
-    # Filter to only unread sources
+    # Фильтр не прочитанных источников
     unread_sources = filter_unread_sources(all_sources)
     
     if not unread_sources:
-        print("No unread source files found in the specified directory.")
+        print("В директории нет непрочитанных источников.")
         return
     
-    # If --count flag is specified, show statistics and exit
+    # Для аргумента --count показ статистики и выход
     if args.count:
         type_counts = count_sources_by_type(unread_sources)
         print("Непрочитанных источников:")
@@ -47,41 +45,41 @@ def main():
             print(f"{source_type}: {count}")
         return
     
-    # Group sources by type
+    # Группировка по типам
     grouped_sources = group_sources_by_type(unread_sources)
     
     if not grouped_sources:
-        print("No valid unread source files with types found in the specified directory.")
+        print("В директории нет непрочитанных источников, указанного типа.")
         return
     
-    # Show type selection menu
+    # Меню выбора типа источника
     type_counts = count_sources_by_type(unread_sources)
     choice = display_type_menu(type_counts)
     
-    if choice == 0:  # Exit option selected
-        print("Exiting without changes.")
+    if choice == 0:  # Выход
+        print("Выход без изменений.")
         return
     
-    # Get selected type
+    # Фильтр источников по выбранному типу
     selected_type = list(type_counts.keys())[choice - 1]
     sources_to_prioritize = grouped_sources[selected_type]
     
     if not sources_to_prioritize:
-        print(f"No unread sources of type '{selected_type}' found.")
+        print(f"Нет источников типа '{selected_type}'.")
         return
     
-    # Perform prioritization
+    # Приоритезация
     prioritized_sources = prioritize_sources(sources_to_prioritize)
     
-    # If empty result, it means user exited during prioritization
+    # Пустой результат - прервано пользователем
     if not prioritized_sources:
-        print("Exiting without changes.")
+        print("Выход без изменений.")
         return
     
-    # Update source files with priority markers
+    # Обновление файлов в соответствии с приоритезацией
     updated_count = update_source_files(prioritized_sources)
     
-    print(f"Successfully updated {updated_count} files with priority markers.")
+    print(f"Успешно промаркировано {updated_count} файлов в соответствии с приоритезацией.")
 
 
 if __name__ == "__main__":
