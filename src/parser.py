@@ -1,6 +1,5 @@
 """
-Module for parsing markdown files with frontmatter.
-Extracts type, readed status, and title from markdown files.
+Модуль чтения файлов markdown. Извлекает тип, статус чтения и заголовок из файлов markdown.
 """
 
 import re
@@ -11,7 +10,7 @@ from typing import Optional
 
 @dataclass
 class SourceFile:
-    """Represents a source file with metadata and title."""
+    """Базовый класс для файла-источника с мета-данными и названием"""
     path: Path
     type: str
     readed: bool
@@ -19,20 +18,18 @@ class SourceFile:
 
 
 def parse_frontmatter(content: str) -> dict:
-    """
-    Parse frontmatter from markdown content.
-    
+    """ Извлечение метаданных из файлов.
     Args:
-        content: Full markdown file content
+        content: Полное содержимое файла
         
     Returns:
-        Dictionary with parsed frontmatter fields
+        Словарь метаданных.
     """
     lines = content.split('\n')
     if len(lines) < 3 or lines[0] != '---':
         return {}
     
-    # Find end of frontmatter
+    # Поиск окончания метаданных
     end_index = -1
     for i in range(1, len(lines)):
         if lines[i] == '---':
@@ -45,7 +42,7 @@ def parse_frontmatter(content: str) -> dict:
     frontmatter_lines = lines[1:end_index]
     frontmatter_content = '\n'.join(frontmatter_lines)
     
-    # Simple YAML-like parsing
+    # Извлечение YAML-подобных данных
     result = {}
     for line in frontmatter_content.split('\n'):
         line = line.strip()
@@ -54,7 +51,7 @@ def parse_frontmatter(content: str) -> dict:
             key = key.strip()
             value = value.strip()
             
-            # Handle boolean values
+            # Обработка булевых значений
             if value.lower() == 'true':
                 value = True
             elif value.lower() == 'false':
@@ -66,18 +63,17 @@ def parse_frontmatter(content: str) -> dict:
 
 
 def extract_title(content: str) -> Optional[str]:
-    """
-    Extract title from markdown content after frontmatter.
+    """ Извлечение наименования документа после метаданных.
     
     Args:
-        content: Full markdown file content
+        content: Содержимое файла
         
     Returns:
-        Title string or None if not found
+        Строку названия или None, если отсутствует
     """
     lines = content.split('\n')
     
-    # Skip frontmatter if present
+    # Пропуск метаданных, если есть
     skip_frontmatter = False
     for i, line in enumerate(lines):
         if line.strip() == '---':
@@ -91,7 +87,7 @@ def extract_title(content: str) -> Optional[str]:
                         return line_content
                 break
     else:
-        # No frontmatter, look from beginning
+        # После метаданных, поиск начала строки
         for line in lines:
             line_content = line.strip()
             if line_content.startswith('- [ ] ') or line_content.startswith('- [/] '):
@@ -101,25 +97,24 @@ def extract_title(content: str) -> Optional[str]:
 
 
 def parse_source_file(file_path: Path) -> Optional[SourceFile]:
-    """
-    Parse a single markdown source file.
+    """ Извлечение каждого файла источника.
     
     Args:
-        file_path: Path to the markdown file
+        file_path: Путь к файлу
         
     Returns:
-        SourceFile object or None if parsing fails
+        Объект файла источника или None если извлечение не удалось
     """
     try:
         content = file_path.read_text(encoding='utf-8')
         
         frontmatter = parse_frontmatter(content)
         
-        # Extract required fields
+        # Извлечение требуемых полей
         source_type = frontmatter.get('type', '')
         readed = frontmatter.get('readed', False)
         
-        # Convert readed to boolean if it's a string
+        # Преобразование строки в булево значение
         if isinstance(readed, str):
             readed = readed.lower() == 'true'
         
@@ -128,26 +123,24 @@ def parse_source_file(file_path: Path) -> Optional[SourceFile]:
         if not source_type or title is None:
             return None
         
-        return SourceFile(
-            path=file_path,
-            type=source_type,
-            readed=readed,
-            title=title
-        )
+        return SourceFile(path=file_path,
+                          type=source_type,
+                          readed=readed,
+                          title=title)
+
     except Exception:
-        # Could not parse file
+        # Файл не прочитан
         return None
 
 
 def find_source_files(directory: Path) -> list[SourceFile]:
-    """
-    Find and parse all markdown source files in directory.
+    """ Чтение файлов из указанной директории
     
     Args:
-        directory: Directory to search for markdown files
+        directory: Директория, содержащая файлы
         
     Returns:
-        List of parsed SourceFile objects
+        Список прочитанных файлов
     """
     sources = []
     
