@@ -150,7 +150,7 @@ def prioritize_sources(sources: List[SourceFile]) -> Dict[SourceFile, str]:
     sources_with_scores.sort(key=lambda x: x[1], reverse=True)
     
     # Разбивка на 5 групп
-    priority_groups = divide_into_priority_groups(sources_with_scores, 5)
+    priority_groups = divide_into_priority_groups(sources_with_scores)
     
     # Создание результирующего словаря по приоритетам
     result = {}

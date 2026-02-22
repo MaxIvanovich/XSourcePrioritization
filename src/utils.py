@@ -99,7 +99,7 @@ def calculate_alpha(count: int) -> int:
     return max(1, alpha)
 
 
-def divide_into_priority_groups(sources_with_scores: List[Tuple[SourceFile, int]], num_groups: int = 5) -> List[List[SourceFile]]:
+def divide_into_priority_groups(sources_with_scores: List[Tuple[SourceFile, int]]) -> List[List[SourceFile]]:
     """ Разделение источников по группа приоритета в зависимости от набранных баллов.
     
     Args:
@@ -109,6 +109,8 @@ def divide_into_priority_groups(sources_with_scores: List[Tuple[SourceFile, int]
     Returns:
         List of lists, each containing SourceFiles for a priority level
     """
+    num_groups = 5
+
     if not sources_with_scores:
         return [[] for _ in range(num_groups)]
     
