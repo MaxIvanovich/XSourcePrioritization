@@ -1,6 +1,4 @@
-"""
-Utility functions for CLI interactions and other helpers.
-"""
+""" Вспомогательные функции для CLI и другие. """
 
 import math
 from typing import List, Tuple
@@ -8,14 +6,13 @@ from .parser import SourceFile
 
 
 def display_type_menu(type_counts: dict) -> int:
-    """
-    Display menu for selecting source type.
+    """ Меню для выбора типа источника.
     
     Args:
-        type_counts: Dictionary mapping type to count
+        type_counts: Словарь типов источников с количеством
         
     Returns:
-        Selected index (0 to len(type_counts)), where 0 means exit
+        Выбранный индекс типа (0 до len(type_counts)), где 0 означает выход
     """
     print("Выберите тип источника для приоритезации:")
     
@@ -37,14 +34,13 @@ def display_type_menu(type_counts: dict) -> int:
 
 
 def display_group_selection(group: List[SourceFile]) -> int:
-    """
-    Display menu for selecting the most important source in a group.
+    """ Меню выбора приоритетного источника из группы.
     
     Args:
-        group: List of SourceFile objects in the group
+        group: Список объектов файлов в группе
         
     Returns:
-        Selected index (0 to len(group)), where 0 means exit
+        Выбранный индекс типа (0 до len(type_counts)), где 0 означает выход
     """
     print("Выберите приоритетный источник:")
     
@@ -64,15 +60,14 @@ def display_group_selection(group: List[SourceFile]) -> int:
 
 
 def get_pair_comparison(source_a: SourceFile, source_b: SourceFile) -> int:
-    """
-    Ask user to compare two sources.
+    """ Меню перекрёстной приоритезации.
     
     Args:
-        source_a: First SourceFile
-        source_b: Second SourceFile
+        source_a: Первый объект
+        source_b: Второй объект
         
     Returns:
-        1 if source_a is more important, 2 if source_b is more important, 0 to exit
+        1 Если выбран source_a, 2 если выбран source_b, 0 - Выход
     """
     print(f"Какой источник приоритетнее:")
     print(f"1. {source_a.title}")
@@ -90,28 +85,26 @@ def get_pair_comparison(source_a: SourceFile, source_b: SourceFile) -> int:
 
 
 def calculate_alpha(count: int) -> int:
-    """
-    Calculate alpha value for group size based on total count.
+    """ Вычисление значения alpha для определения размера группы.
     
     Args:
-        count: Total number of sources
+        count: Общее число источников
         
     Returns:
-        Alpha value (minimum 1)
+        Значение alpha (минимум 1)
     """
     if count == 0:
         return 1
     alpha = math.ceil(count / 25)
-    return max(1, alpha)  # Ensure at least 1
+    return max(1, alpha)
 
 
 def divide_into_priority_groups(sources_with_scores: List[Tuple[SourceFile, int]], num_groups: int = 5) -> List[List[SourceFile]]:
-    """
-    Divide sources into priority groups based on scores.
+    """ Разделение источников по группа приоритета в зависимости от набранных баллов.
     
     Args:
-        sources_with_scores: List of tuples (SourceFile, score) sorted by score descending
-        num_groups: Number of groups to create (default 5)
+        sources_with_scores: Список кортежей (SourceFile, score) отсортированный по убыванию баллов
+        num_groups: Количество групп приоритетов (default 5)
         
     Returns:
         List of lists, each containing SourceFiles for a priority level
@@ -119,7 +112,7 @@ def divide_into_priority_groups(sources_with_scores: List[Tuple[SourceFile, int]
     if not sources_with_scores:
         return [[] for _ in range(num_groups)]
     
-    # Calculate base size for each group
+    # Определение базового размера групп
     total_count = len(sources_with_scores)
     base_size = total_count // num_groups
     remainder = total_count % num_groups
@@ -128,7 +121,7 @@ def divide_into_priority_groups(sources_with_scores: List[Tuple[SourceFile, int]
     start_idx = 0
     
     for i in range(num_groups):
-        # Add one extra item to the first 'remainder' groups to distribute remainder
+        # Добавьте один дополнительный элемент к первым группам "остаток", чтобы распределить остаток
         group_size = base_size + (1 if i < remainder else 0)
         end_idx = start_idx + group_size
         group_sources = [item[0] for item in sources_with_scores[start_idx:end_idx]]
