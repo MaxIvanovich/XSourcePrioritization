@@ -1,48 +1,43 @@
-"""
-Module for updating source files with priority markers.
-"""
+""" Модуль записи результатов в файлы. """
 
 from typing import Dict
 from .parser import SourceFile
 
 
 def update_source_file(source: SourceFile, priority_level: str) -> bool:
-    """
-    Update a source file with the appropriate priority marker.
+    """ Обновление исходного файла с соответствующим маркером приоритета.
     
     Args:
-        source: SourceFile object to update
-        priority_level: Priority level ('highest', 'high', 'medium', 'low', 'lowest')
+        source: Объект файла 
+        priority_level: Приоритет ('highest', 'high', 'medium', 'low', 'lowest')
         
     Returns:
-        True if update was successful, False otherwise
+        True при удачном обновление, иначе False
     """
-    # Define marker mapping
-    markers = {
-        'highest': '🔺',
-        'high': '⏫',
-        'medium': '🔼',
-        'low': '🔽',
-        'lowest': '⏬'
-    }
+    # Маска приоритетов
+    markers = {'highest': '🔺',
+               'high': '⏫',
+               'medium': '🔼',
+               'low': '🔽',
+               'lowest': '⏬'}
     
-    # Get the appropriate marker
+    # Получение соответствующего маркера
     marker = markers.get(priority_level)
     if not marker:
-        return False  # Invalid priority level
+        return False  # Некорректный уровень приоритета
     
-    # Determine the checkbox state based on priority level
-    # highest gets [/], others get [ ]
+    # Определение статуса чек-бокса опираясь на приоритет
+    # highest получает [/], остальные получают [ ]
     if priority_level == 'highest':
         new_checkbox = '- [/]'
     else:
         new_checkbox = '- [ ]'
     
-    # Construct the new title line
-    # Remove any existing checkbox from the original title
+    # Формирование новой строки заголовка
+    # Удаление чек-бокса
     original_title = source.title
     if original_title.startswith('- [ ]') or original_title.startswith('- [/]'):
-        # Extract just the content part after the checkbox
+        # Извлечение строки сразу за чек-боксом
         content_part = original_title[5:].strip()
     else:
         content_part = original_title.strip()
@@ -50,27 +45,27 @@ def update_source_file(source: SourceFile, priority_level: str) -> bool:
     new_title = f"{new_checkbox} {content_part} {marker}".strip()
     
     try:
-        # Read the current file content
+        # Чтение содержимого текущего файла
         content = source.path.read_text(encoding='utf-8')
         
-        # Split content into lines
+        # Разбивка содержимого по строкам
         lines = content.split('\n')
         
-        # Find and replace the title line
+        # Определение и замена строки заголовка
         updated_lines = []
         title_replaced = False
         
-        # Skip frontmatter if present
+        # Пропуск метаданных, если есть
         in_frontmatter = False
         for i, line in enumerate(lines):
             if line.strip() == '---':
                 if not in_frontmatter:
                     in_frontmatter = True
                 else:
-                    # End of frontmatter
+                    # Окончание метаданных
                     in_frontmatter = False
                 
-            # Check if this is the title line outside of frontmatter
+            # Проверьте, является ли это строкой заголовка за пределами frontmatter
             if not in_frontmatter:
                 stripped_line = line.strip()
                 if (stripped_line.startswith('- [ ] ') or stripped_line.startswith('- [/] ')) and not title_replaced:
@@ -81,29 +76,28 @@ def update_source_file(source: SourceFile, priority_level: str) -> bool:
             else:
                 updated_lines.append(line)
         
-        # Write the updated content back to the file
+        # Запись обновленного содержимого обратно в файл
         if title_replaced:
             updated_content = '\n'.join(updated_lines)
             source.path.write_text(updated_content, encoding='utf-8')
             return True
         else:
-            # Title line was not found
+            # Строка заголовка не найдена
             return False
             
     except Exception:
-        # Error occurred while reading/writing file
+        # Ошибка чтения/записи файла
         return False
 
 
 def update_source_files(prioritized_sources: Dict[SourceFile, str]) -> int:
-    """
-    Update multiple source files with their priority markers.
+    """ Обновление нескольких исходных файлов с указанием их маркеров приорита.
     
     Args:
-        prioritized_sources: Dictionary mapping SourceFile to priority level
+        prioritized_sources: Словарь с объектами файлов сопоставленными с приоритетами
         
     Returns:
-        Number of successfully updated files
+        Число успешно обновлённых файлов
     """
     success_count = 0
     
